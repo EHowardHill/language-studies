@@ -3,6 +3,7 @@ import sqlite3, csv
 conn = sqlite3.connect('master_dict.db')
 c = conn.cursor()
 
+"""
 with open('kanji.csv', newline='', encoding="utf8") as csvfile:
     s = csv.reader(csvfile, delimiter=',', quotechar='"')
     for row in s:
@@ -12,8 +13,8 @@ with open('kanji.csv', newline='', encoding="utf8") as csvfile:
         conn.commit()
 
 conn.close()
+"""
 
-"""
-c.execute('select * from dictionary limit 200')
-print(c.fetchall())
-"""
+c.execute(r"select english from dictionary where english like '%(humble)%'")
+data = c.fetchall()
+print(data)
