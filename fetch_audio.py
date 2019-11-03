@@ -1,18 +1,15 @@
-import os, sqlite3, csv
+import os, sqlite3, csv, romkan
 from gtts import gTTS
-
-print()
 
 conn = sqlite3.connect('master_dict.db')
 c = conn.cursor()
-c.execute("select distinct english, id from dictionary;")
+c.execute("select distinct kana, id from dictionary;")
 
 for word in c.fetchall():
-    my_path = str('./audio/en/' + str(word[1]) + '.mp3')
-    if not os.path.exists(my_path):
-        try:
-            tts = gTTS(text=word[0], lang='en')
-            tts.save(my_path)
-        except: pass
+    my_path = str('./audio/ja/' + romkan.to_roma(word[0]).replace('/', ' ') + '.wav')
+    if (not os.path.exists(my_path)):
+        tts = gTTS(text=word[0], lang='ja')
+        tts.save(my_path)
+        print(romkan.to_roma(word[0]).replace('/', ' '))
 
 c.close()

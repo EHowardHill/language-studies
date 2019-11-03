@@ -1,4 +1,4 @@
-import sqlite3, csv
+import sqlite3, csv, pprint, romkan
 
 conn = sqlite3.connect('master_dict.db')
 c = conn.cursor()
@@ -15,6 +15,11 @@ with open('kanji.csv', newline='', encoding="utf8") as csvfile:
 conn.close()
 """
 
-c.execute(r"select english from dictionary where english like '%(humble)%'")
-data = c.fetchall()
-print(data)
+c.execute(r"select distinct kana, id from dictionary;")
+data = [d[0] for d in c.fetchall()]
+
+for d in data:
+    c.execute("update dictionary set romanji = '" + romkan.to_roma(d).replace('/',' ').replace('\'',' ') + "' where kana = '" + d + "';")
+
+conn.commit()
+conn.close()
