@@ -3,7 +3,7 @@ from google.cloud import texttospeech
 
 conn = sqlite3.connect('master_dict.db')
 c = conn.cursor()
-c.execute("select distinct english, kana, kanji, romanji from dictionary where jlpt = 5;")
+c.execute("select distinct english, kana, kanji, romanji from dictionary where jlpt >= 4;")
 data = c.fetchall()
 path = 'C:/Users/ehill/Documents/GitHub/language-studies/audio/ja/'
 
