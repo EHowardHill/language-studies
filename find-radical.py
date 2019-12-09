@@ -5,7 +5,7 @@ ci = conn.cursor()
 ci.execute(r"select distinct kanji, decomp, english from kanji;")
 kan = {d[0]:str(d[1]).replace('[','').replace(']','').replace('\'','') for d in ci.fetchall()}
 
-phoneme = "ㄚㄧㆲロユ56789フブプㆠㄆㄇㄉㄌㄑㄫンシ"
+phoneme = "ㄚㄧㆲロユ56789フブプㆠㄆㄇㄉㄌㄑㄫンシ1"
 phon = {}
 
 convert = {
@@ -30,7 +30,8 @@ convert = {
     "ㄑ":"k",
     "ㄫ":"r",
     "ン":"ts",
-    "シ":"j"
+    "シ":"j",
+    "1":"t"
 }
 
 minus = 0
@@ -41,9 +42,9 @@ while (t-minus) < 461:
     while o >= len(phoneme):
         div = int(o / len(phoneme))
         rem = o % len(phoneme)
-        out = phoneme[rem] + out
+        out = out + phoneme[rem]
         o = div
-    out = phoneme[o] + out
+    out = out + phoneme[o]
     if (len([o for o in out if phoneme.index(o) < 11]) < 5) and (len([o for o in out if phoneme.index(o) >= 11]) < 5) and (len(out) > 1 and out[0] != out[1]):
         phon[t-minus] = out
         #print(str(t-minus) + '\t' + str([convert[o] for o in out]))
@@ -116,15 +117,15 @@ for han in all_res:
     #print(han[0] + '\t' + new_str)
 
     roman = "".join([convert[t] for t in new_str])
-    roman = roman.replace('ii','sh').replace('ioio','g').replace('iuiu','\'').replace('iu','ng').replace('eiei','l').replace('yaya','f')
+    roman = roman.replace('ii','sh').replace('eiy','g').replace('iuiu','\'').replace('iu','ng').replace('ioio','f')
 
-    if len(roman) > 8:
-        roman = (roman[:6] + " (" + roman[6:] + ")")
+    if len(roman) > 16:
+        roman = (roman[:12] + " (" + roman[12:] + ")")
     else:
         roman = (roman)
 
     com = ("insert or ignore into chitotzish values (\"" + eng + "\", \"" + han[0].replace(' ','') + "\", \"" + roman + "\");")
-    print(com)
+    #print(com)
     conn.execute(com)
     conn.commit()
 

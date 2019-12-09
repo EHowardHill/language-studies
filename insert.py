@@ -1,27 +1,35 @@
 import sqlite3, csv, pprint
 
-conn = sqlite3.connect('master_dict.db')
+conn = sqlite3.connect('sentences.db')
 c = conn.cursor()
 
-"""
-with open('kanji.csv', newline='', encoding="utf8") as csvfile:
-    s = csv.reader(csvfile, delimiter=',', quotechar='"')
+batch = []
+
+print("Loading batch...")
+
+with open('sentences.csv', newline='', encoding="utf8") as csvfile:
+    s = csv.reader(csvfile, delimiter='\t', quotechar='"')
     for row in s:
-        print("insert into kanji (kanji, onyomi, kunyomi, english) values (\"" + row[0] + "\",\"" + row[1] + "\",\"" + row[2] + "\",\"" + row[3] + "\");")
-        #c.execute("insert into dictionary (jlpt, kanji, kana, english) values (1, \"" + row[0] + "\",\"" + row[1] + "\",\"" + row[2] + "\");")
-        c.execute("insert into kanji (kanji, onyomi, kunyomi, english) values (\"" + row[0] + "\",\"" + row[1] + "\",\"" + row[2] + "\",\"" + row[3] + "\");")
-        conn.commit()
+        batch.append(row)
 
+print("Done with batching...")
+
+for row in batch:
+    try:
+        c.execute("insert or ignore into master values (\"" + row[2] + "\",\"" + row[0] + "\",\"" + row[1] + "\");")
+    except:
+        pass
+
+conn.commit()
 conn.close()
-"""
 
+"""
 decomp = []
 
 c.execute(r"select distinct radical from radical;")
 data = [d[0] for d in c.fetchall()]
 pprint.pprint(data)
 
-"""
 def getBool(b):
     return '1' if b else '0'
 
@@ -71,4 +79,4 @@ for d in data:
 """
 
 #conn.commit()
-conn.close()
+#conn.close()
