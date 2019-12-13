@@ -1,9 +1,9 @@
 import pprint, subprocess
 
-oper = ["-","+","0"," ","is","<",">","%","#",'dim',"=","*",'/','if','then','com',",","repeat","at"]
+oper = ["-","+","0"," ","is","<",">","%","#",'dim',"=","*",'/','if','then','com',",","repeat","at","remove"]
 comm = ["if"]
 null = [" ",","]
-wait = ["repeat","dim","at"]
+wait = ["repeat","dim","at","remove"]
 f_wt = ["dim"]
 global vars
 
@@ -126,14 +126,10 @@ def process(data):
                 i = parse(v3[1:-1])
                 del i[v4]
                 sl = i
+                print(sl)
             elif a == "push":
                 i = parse(v3[1:-1]).insert(v4)
                 sl = i
-            elif a == "pop":
-                i = parse(v3[1:-1])
-                j = i[v4]
-                del i[v4]
-                sl = j
             elif a == "dim":
                 sl = None
                 vars[v1[1]] = v4
@@ -198,8 +194,6 @@ def process(data):
 
 raw = """
 
-x dim;
-x (1 2 3 4) 1 pop =;
 
 """
 
