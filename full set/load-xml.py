@@ -1,33 +1,107 @@
 import os, sqlite3, pprint, xmltodict, json
+from tinydb import TinyDB, Query
 
 conn = sqlite3.connect('jisho.db')
 c = conn.cursor()
 
-data = ""
+# Build a basic dictionary
+with open('JMdict_e.xml', encoding='utf-8') as of:
+    data = of.readlines()
 
-print('step 1')
-fr = []
+tags = []
+full_data = []
+cache = {}
+rele = []
+kele = []
+reno = []
+sense = []
+key = 0
+keyname = ""
 
-json_data=open("jmdict_2.json")
-data = json.load(json_data)
+for d in data:
 
-for key, value in data.items():
-    pprint.pprint("Key:")
-    pprint.pprint(key)
+    d = d[:-1]
+    if d == '<entry>':
+        cache = {}
+        key = 0
+    elif d == '</entry>':
+        full_data.append(cache)
+    
+    elif d == '<sense>':
+        key = 1
+        t = 0
+        while 'sense_' + str(t) in cache: t += 1
+        keyname = 'sense_' + str(t)
+        cache[keyname] = []
+    elif d == '</sense>':
+        key = 0
+        sense = []
 
-"""
-char = []
+    elif d == '<r_ele>':
+        key = 2
+        t = 0
+        while 'r_ele_' + str(t) in cache: t += 1
+        keyname = 'r_ele_' + str(t)
+        cache[keyname] = []
+    elif d == '</r_ele>':
+        key = 0
+        rele = []
 
-with open('kradfile','r', encoding="euc_jp") as file:
-    data = file.readlines()
-    for ch in data:
-        ch1 = ch.replace(' ','').split(':')
-        if len(ch1) == 2 and '#' not in ch1[0]:
-            char.append([ch1[0],ch1[1].replace('\n','')])
+    elif d == '<k_ele>':
+        key = 3
+        t = 0
+        while 'k_ele_' + str(t) in cache: t += 1
+        keyname = 'k_ele_' + str(t)
+        cache[keyname] = []
+    elif d == '</k_ele>':
+        key = 0
+        kele = []
 
-for r in char:
-    c.execute("insert or ignore into decomp values ('" + r[0] + "','" + r[1] + "');")
-"""
+    elif d == '<re_nokanji>':
+        key = 4
+        t = 0
+        while 're_nokanji_' + str(t) in cache: t += 1
+        keyname = 're_nokanji_' + str(t)
+        cache[keyname] = []
+    elif d == '</re_nokanji>':
+        key = 0
+        reno = []
 
-conn.commit()
+    else:
+        if key > 0:
+            bit = d.replace('</','>').split('>')
+            if (len(bit)) == 4:
+                if 'lsource' not in bit[0]:
+                    cache[keyname].append([bit[0][1:],bit[1]])
+
+def retbit(t,bit):
+    if bit in t:
+        return json.dumps(t['r_ele_0'],ensure_ascii=False)
+    else:
+        return None
+
+c.execute("SELECT name FROM sqlite_master WHERE type='table';")
+print(c.fetchall())
+
+size = len(full_data)
+for bit in range(size):
+    print(str(bit) + " / " + str(size))
+    t = full_data[bit]
+    query = "insert or ignore into dict1 values (?,?,?,?,?,?,?,?,?,?,?);"
+    c.execute(
+        query,(
+            str(bit),
+            retbit(t,'r_ele_0'),
+            retbit(t,'r_ele_1'),
+            retbit(t,'sense_0'),
+            retbit(t,'sense_1'),
+            retbit(t,'sense_2'),
+            retbit(t,'sense_3'),
+            retbit(t,'sense_4'),
+            retbit(t,'k_ele_0'),
+            retbit(t,'k_ele_1'),
+            retbit(t,'k_ele_2'))
+        )
+    conn.commit()
+
 conn.close()
