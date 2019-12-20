@@ -1,27 +1,128 @@
 <html>
     <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    
+        <style>
+            .clickable
+            {
+                cursor: pointer;
+            }
+        </style>
     </head>
     <body>
         <script>
-            $('#reset').click(function() {
-                $.ajax({
-                    type: 'POST',
-                    url: "/reset",
-                    data: {student_id: 1},
-                    dataType: "text",
-                    success: function(data){
-                        alert("Thingy: "+ data.toString());
-                    }
-                });
-            })
+            window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+            const recognition = new window.SpeechRecognition();
+            var msg = new SpeechSynthesisUtterance();
+
+            recognition.continuous = false;
+            recognition.interimResults = true;
+
+            recognition.onresult = function(event) {
+                $("#speech-progress").text(event.results[0][0].transcript);
+            };
+
+            recognition.onspeechend = function(event) {
+                recognition.stop();
+            }
+
+            function submit() {
+                var config = {};
+                config['JLPT'] = 'N5';
+
+                $.post("/fetch_word",
+                    {"config": ['N5']},
+                    function(data, status) {
+                        update_titles(data['message']);
+                    },
+                    'json'
+                )
+            }
+
+            speechSynthesis.onvoiceschanged = function () {
+                var voices = this.getVoices();
+                console.log(voices);
+            };
+
+            function speak(text) {
+                msg.text = text;
+                msg.lang = 'ja-JP';
+                msg.rate = 0.9;
+                window.speechSynthesis.speak(msg);
+            }
+
+            function update_titles(data) {
+                if (data[1] != "") {
+                    $('#text-title').text(data[1].toString());
+                    $('#text-subtitle').text(data[0].toString());
+                } else {
+                    $('#text-title').text(data[0].toString());
+                    $('#text-subtitle').text("");
+                }
+                $('#text-spoiler').text(data[3].toString());
+
+                speak(data[1]);
+            }
+
+            function repeat() {
+                speak($("#text-title").text());
+            }
+
+            $(document).on('click', '.panel div.clickable', function (e) {
+                var $this = $(this); //Heading
+                var $panel = $this.parent('.panel');
+                var $panel_body = $panel.children('.panel-body');
+                var $display = $panel_body.css('display');
+
+                if ($display == 'block') {
+                    $panel_body.slideUp();
+                } else if($display == 'none') {
+                    $panel_body.slideDown();
+                }
+            });
+
+            $(document).ready(function(e){
+                var $classy = '.panel.autocollapse';
+                var $found = $($classy);
+                $found.find('.panel-body').hide();
+                $found.removeClass($classy);
+
+                recognition.start();
+            });
         </script>
 
-        Size:
-        <div id='result'>
-            {{size}}
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                
+                <h1 id='text-title' class="display-4">KANJI GOES HERE</h1>
+
+                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                    
+                    <h3 id='text-subtitle' class="btn btn-info" id='text-subtitle' onclick=repeat()>
+                        KANA GOES HERE
+                    </h3>
+                    
+                </div>
+
+                <button class="btn btn-primary btn-block" onclick=submit()>Reset</button>
+
+                <div class="panel panel-success autocollapse">
+                    <div class="panel-heading clickable">
+                        <h3 class="btn btn-info btn-block">
+                            Translation
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <p id='text-spoiler' class="lead">SPOILER GOES HERE</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <button id='reset'>Reset</button>
+        <p id='speech-progress' class="lead">Is this working?</p>
     </body>
 </html>
