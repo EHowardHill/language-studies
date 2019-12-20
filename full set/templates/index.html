@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <script>
+            $('#reset').click(function() {
+                $.ajax({
+                    type: 'POST',
+                    url: "/reset",
+                    data: {student_id: 1},
+                    dataType: "text",
+                    success: function(data){
+                        alert("Thingy: "+ data.toString());
+                    }
+                });
+            })
+        </script>
+
+        Size:
+        <div id='result'>
+            {{size}}
+        </div>
+
+        <button id='reset'>Reset</button>
+    </body>
+</html>
