@@ -31,16 +31,20 @@
             }
 
             function submit() {
-                var config = {};
-                config['JLPT'] = 'N5';
+                //
 
-                $.post("/fetch_word",
-                    {"config": ['N5']},
-                    function(data, status) {
+                jso = {'jlpt': $('input:radio[name=options]:checked').val()};
+
+                $.ajax({
+                    url: '/fetch_word',
+                    type: 'post',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
                         update_titles(data['message']);
                     },
-                    'json'
-                )
+                    data: JSON.stringify(jso)
+                });
             }
 
             speechSynthesis.onvoiceschanged = function () {
@@ -94,6 +98,27 @@
                 recognition.start();
             });
         </script>
+
+        <div class="btn-group btn-group-toggle" style="padding: 5px;" data-toggle="buttons">
+            <label class="btn btn-outline-secondary active">
+                <input type="radio" value=0 name="options" id="all" checked> All Words
+            </label>
+            <label class="btn btn-outline-secondary">
+                <input type="radio" value=1 name="options" id="t1"> N1
+            </label>
+            <label class="btn btn-outline-secondary">
+                <input type="radio" value=2 name="options" id="t2"> N2
+            </label>
+            <label class="btn btn-outline-secondary">
+                <input type="radio" value=3 name="options" id="t3"> N3
+            </label>
+            <label class="btn btn-outline-secondary">
+                <input type="radio" value=4 name="options" id="t4"> N4
+            </label>
+            <label class="btn btn-outline-secondary">
+                <input type="radio" value=5 name="options" id="t5"> N5
+            </label>
+        </div>
 
         <div class="jumbotron jumbotron-fluid">
             <div class="container">
