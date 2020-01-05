@@ -1,0 +1,125 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    
+        <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+        <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+        <script src="{{ url_for('static', filename='scripts/wanakana.min.js') }}"></script>
+
+        <style>
+            .clickable
+            {
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript"
+         src="{{ url_for('static', filename='scripts/audio-test.js') }}"></script>
+
+         <div>
+            <audio id="snd-ready">
+                <source src="{{ url_for('static', filename='ready.wav') }}" type="audio/wav">
+            </audio>
+            <audio id="snd-success">
+                <source src="{{ url_for('static', filename='success.wav') }}" type="audio/wav">
+            </audio>
+            <audio id="snd-fail">
+                <source src="{{ url_for('static', filename='fail.wav') }}" type="audio/wav">
+            </audio>
+        </div>
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="#">チェックズ</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">JLPT<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">Numbers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">Dictionary</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">Disabled</a>
+                    </li>
+                    </ul>
+                    <form class="form-inline my-2 my-lg-0">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </div>
+        </nav>
+
+        <div class="row">
+            <div class="btn-group btn-group-toggle col-xs-2 border col-xs-offset-4" style="padding: 5px;" data-toggle="buttons">
+                <label class="btn btn-outline-secondary active">
+                    <input type="radio" value=0 name="options" id="all" checked> All Words
+                </label>
+                <label class="btn btn-outline-secondary">
+                    <input type="radio" value=1 name="options" id="t1"> N1
+                </label>
+                <label class="btn btn-outline-secondary">
+                    <input type="radio" value=2 name="options" id="t2"> N2
+                </label>
+                <label class="btn btn-outline-secondary">
+                    <input type="radio" value=3 name="options" id="t3"> N3
+                </label>
+                <label class="btn btn-outline-secondary">
+                    <input type="radio" value=4 name="options" id="t4"> N4
+                </label>
+                <label class="btn btn-outline-secondary">
+                    <input type="radio" value=5 name="options" id="t5"> N5
+                </label>
+            </div>
+            <div class="btn-group btn-group-toggle col-xs-2 border" style="padding: 5px;" data-toggle="buttons">
+                <label class="btn btn-outline-secondary active">
+                    <input type="radio" value=0 name="direction" id="jp" checked> JP to EN
+                </label>
+                <label class="btn btn-outline-secondary">
+                    <input type="radio" value=1 name="direction" id="en"> EN to JP
+                </label>
+            </div>
+        </div>
+
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                
+                <p id='speech-progress' class="lead">...</p>
+                <h1 id='text-title' class="display-4">KANJI GOES HERE</h1>
+
+                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                    <h3 id='text-subtitle' class="btn btn-info" id='text-subtitle' onclick=repeat()>
+                        KANA GOES HERE
+                    </h3>
+                </div>
+
+                <button class="btn btn-primary" onclick=submit()>Reset</button>
+                
+                <div class="panel panel-success autocollapse">
+                    <div class="panel-heading clickable">
+                        <h3 class="btn btn-info">
+                            Translation
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <p id='text-spoiler' class="lead">SPOILER GOES HERE</p>
+                    </div>
+                </div>
+
+                <button class="btn btn-info" onclick=powerswap()>Power Swap</button>
+            </div>
+        </div>
+    </body>
+</html>
