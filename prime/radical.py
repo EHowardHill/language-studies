@@ -1,5 +1,4 @@
-import os, csv, pprint, jieba, romkan
-from hangulize import hangulize
+import os, csv, pprint, jieba
 from baseconvert import BaseConverter
 from googletrans import Translator
 
@@ -401,8 +400,8 @@ primes = {
     388: 2677
 }
 
-cons = ['g','d','r','m','n','s','ng','j','ch','k','t','p','b','h']
-vowl = ['a','yo','eo','o','yo','u','yu','i','oe','yae','e','wu','we','wi']
+cons = ['g','d','r','m','n','s','ng','j','ch','kk','t','p','b','h']
+vowl = ['a','yo','eo','o','wa','u','yu','i','oe','yae','e','wae','we','wi']
 
 with open('hanz.csv', newline='', encoding='utf-8') as f:
     reader = csv.reader(f)
