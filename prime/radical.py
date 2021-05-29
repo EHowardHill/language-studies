@@ -448,7 +448,7 @@ rad_freq = {t[0] : primes[rad_freq.index(t) + 1] for t in rad_freq}     # Get pr
 print('～中国語分解のプログラム～\n')
 
 while True:
-    seg_list = jieba.cut(translator.translate(input('Input text:\t'), dest='zh-CN').text)
+    seg_list = jieba.cut(input('Input text:\t'))
 
     output = ''
     for seg in seg_list:
